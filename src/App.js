@@ -1,25 +1,65 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
 
-function App() {
+const useLocalStorage = (key, initialValue) => {
+  const [value, setValue] = useState(() => {
+    try {
+      const item = window.localStorage.getItem(key);
+      return item ? JSON.parse(item) : initialValue;
+    } catch (error) {
+      console.error(error);
+      return initialValue;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(key, JSON.stringify(value));
+    } catch (error) {
+      console.error(error);
+    }
+  }, [key, value]);
+
+  const removeItem = () => {
+    setValue(initialValue);
+    try {
+      window.localStorage.removeItem(key);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const clear = () => {
+    setValue(initialValue);
+    try {
+      window.localStorage.clear();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getValue = () => {
+    try {
+      return window.localStorage.getItem(key);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return [value, setValue, removeItem, clear, getValue];
+};
+
+const App = () => {
+  const [name, setName, removeName, clearName, getName] = useLocalStorage("name", "");
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <p>Name: {name}</p>
+      <input type="text" value={name} onChange={e => setName(e.target.value)} />
+      <button onClick={removeName}>Remove Name</button>
+      <button onClick={clearName}>Clear all</button>
+      <p>Value from local storage: {getName()}</p>
     </div>
   );
-}
+};
 
 export default App;
