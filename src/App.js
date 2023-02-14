@@ -76,7 +76,7 @@ const App = () => {
         />
         <button type="submit">Add Applicant For Internship</button>
       </form>
-      <button onClick={clearApplicants} className="button" > Clear all</button>
+      <button onClick={clearApplicants} className="button" > Clear </button>
     </div>
   );
 };
